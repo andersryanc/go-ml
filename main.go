@@ -16,25 +16,9 @@ func main() {
 	}
 	_ = xys
 
-	p, err := plot.New()
+	err = plotData("out.png", xys)
 	if err != nil {
-		log.Fatalf("could not create plot: %v", err)
-	}
-
-	wt, err := p.WriterTo(512, 512, "png")
-	if err != nil {
-		log.Fatalf("could not create writer: %v", err)
-	}
-
-	f, err := os.Create("out.png")
-	if err != nil {
-		log.Fatalf("could not create out.png: %v", err)
-	}
-	defer f.Close()
-
-	_, err = wt.WriteTo(f)
-	if err != nil {
-		log.Fatalf("could not write to out.png: %v", err)
+		log.Fatalf("could not plot data: %v", err)
 	}
 }
 
@@ -63,4 +47,29 @@ func readData(path string) ([]xy, error) {
 	}
 
 	return xys, nil
+}
+
+func plotData(path string, xys []xy) error {
+	p, err := plot.New()
+	if err != nil {
+		return fmt.Errorf("could not create plot: %v", err)
+	}
+
+	wt, err := p.WriterTo(512, 512, "png")
+	if err != nil {
+		return fmt.Errorf("could not create writer: %v", err)
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("could not create %s: %v", path, err)
+	}
+	defer f.Close()
+
+	_, err = wt.WriteTo(f)
+	if err != nil {
+		return fmt.Errorf("could not write to %s: %v", path, err)
+	}
+
+	return nil
 }
