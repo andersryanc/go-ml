@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"math"
 	"os"
 
 	"gonum.org/v1/plot"
@@ -75,11 +76,9 @@ func plotData(path string, xys plotter.XYs) error {
 	p.Add(s)
 
 	// create (fake) linear regression result
-	var x, c float64
-	x = 1
-	c = 0.5
+	m, c := linearRegression(xys)
 	l, err := plotter.NewLine(plotter.XYs{
-		{X: 5, Y: 5 + c}, {X: 25, Y: (25 * x) + c},
+		{X: 3, Y: (3 * m) + c}, {X: 20, Y: (20 * m) + c},
 	})
 	if err != nil {
 		return fmt.Errorf("could not create line: %v", err)
@@ -101,4 +100,37 @@ func plotData(path string, xys plotter.XYs) error {
 		return fmt.Errorf("could not close %s: %v", path, err)
 	}
 	return nil
+}
+
+func linearRegression(xys plotter.XYs) (m, c float64) {
+	const (
+		min   = -100.0
+		max   = 100.0
+		delta = 0.1
+	)
+
+	minCost := math.MaxFloat64
+	for im := min; im < max; im += delta {
+		for ic := min; ic < max; ic += delta {
+			cost := computeCost(xys, im, ic)
+			if cost < minCost {
+				minCost = cost
+				m, c = im, ic
+			}
+		}
+	}
+
+	fmt.Printf("cost(%.2f, %.2f) = %.2f\n", m, c, computeCost(xys, m, c))
+
+	return m, c
+}
+
+func computeCost(xys plotter.XYs, m, c float64) float64 {
+	// cost = 1/N sum((y - (m*x+c))^2)
+	s := 0.0
+	for _, xy := range xys {
+		d := xy.Y - (xy.X*m + c)
+		s += d * d
+	}
+	return s / float64(len(xys))
 }

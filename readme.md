@@ -7,4 +7,5 @@ In this repo, I explore machine learning, reading + plotting data and other stuf
 ## Resources
 
 - https://www.gonum.org/
-- https://www.youtube.com/watch?v=ihP7lQivA6M
+- [justforfunc #34: Plotting Data with gonum/plot](https://www.youtube.com/watch?v=ihP7lQivA6M)
+- [justforfunc #38: Linear Regression with Gradient Descent](https://www.youtube.com/watch?v=ZPd_fKyrX48)
