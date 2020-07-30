@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
 )
 
 func main() {
@@ -61,6 +62,15 @@ func plotData(path string, xys []xy) error {
 	if err != nil {
 		return fmt.Errorf("could not create plot: %v", err)
 	}
+
+	s, err := plotter.NewScatter(plotter.XYs{
+		{X: 0, Y: 0}, {X: 0.5, Y: 0.5}, {X: 1, Y: 1},
+	})
+	if err != nil {
+		return fmt.Errorf("could not create scatter: %v", err)
+	}
+	p.Add(s)
+
 	wt, err := p.WriterTo(512, 512, "png")
 	if err != nil {
 		return fmt.Errorf("could not create writer: %v", err)
