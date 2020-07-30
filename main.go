@@ -75,7 +75,7 @@ func plotData(path string, xys plotter.XYs) error {
 	}
 	p.Add(s)
 
-	// create (fake) linear regression result
+	// create linear regression result
 	m, c := linearRegression(xys)
 	l, err := plotter.NewLine(plotter.XYs{
 		{X: 3, Y: (3 * m) + c}, {X: 20, Y: (20 * m) + c},
