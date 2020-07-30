@@ -31,7 +31,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not read data.txt: %v", err)
 	}
-	_ = xys
 
 	err = plotData("out.png", xys)
 	if err != nil {
