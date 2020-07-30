@@ -65,6 +65,7 @@ func plotData(path string, xys plotter.XYs) error {
 		return fmt.Errorf("could not create plot: %v", err)
 	}
 
+	// create scatter with all data points
 	s, err := plotter.NewScatter(xys)
 	s.GlyphStyle.Shape = draw.CrossGlyph{}
 	s.Color = color.RGBA{R: 255, A: 255}
@@ -72,6 +73,18 @@ func plotData(path string, xys plotter.XYs) error {
 		return fmt.Errorf("could not create scatter: %v", err)
 	}
 	p.Add(s)
+
+	// create (fake) linear regression result
+	var x, c float64
+	x = 1
+	c = 0.5
+	l, err := plotter.NewLine(plotter.XYs{
+		{X: 5, Y: 5 + c}, {X: 25, Y: (25 * x) + c},
+	})
+	if err != nil {
+		return fmt.Errorf("could not create line: %v", err)
+	}
+	p.Add(l)
 
 	wt, err := p.WriterTo(512, 512, "png")
 	if err != nil {
