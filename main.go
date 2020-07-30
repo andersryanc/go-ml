@@ -27,7 +27,7 @@ func main() {
 
 type xy struct{ x, y float64 }
 
-func readData(path string) ([]xy, error) {
+func readData(path string) (plotter.XYs, error) {
 	// read line by line, not all at once (like ioutil.ReadFile)
 	f, err := os.Open(path)
 	if err != nil {
@@ -35,7 +35,7 @@ func readData(path string) ([]xy, error) {
 	}
 	defer f.Close()
 
-	var xys []xy
+	var xys plotter.XYs
 	s := bufio.NewScanner(f)
 	for s.Scan() {
 		var x, y float64
@@ -43,7 +43,7 @@ func readData(path string) ([]xy, error) {
 		if err != nil {
 			log.Printf("discarding bad data point: %q: %v", s.Text(), err)
 		}
-		xys = append(xys, xy{x, y})
+		xys = append(xys, plotter.XY{X: x, Y: y})
 	}
 	if err := s.Err(); err != nil {
 		return nil, fmt.Errorf("could not scan: %v", err)
@@ -52,7 +52,7 @@ func readData(path string) ([]xy, error) {
 	return xys, nil
 }
 
-func plotData(path string, xys []xy) error {
+func plotData(path string, xys plotter.XYs) error {
 	// Create a file to write the plot to
 	f, err := os.Create(path)
 	if err != nil {
@@ -65,12 +65,7 @@ func plotData(path string, xys []xy) error {
 		return fmt.Errorf("could not create plot: %v", err)
 	}
 
-	pxys := make(plotter.XYs, len(xys))
-	for i, xy := range xys {
-		pxys[i].X = xy.x
-		pxys[i].Y = xy.y
-	}
-	s, err := plotter.NewScatter(pxys)
+	s, err := plotter.NewScatter(xys)
 	s.GlyphStyle.Shape = draw.CrossGlyph{}
 	s.Color = color.RGBA{R: 255, A: 255}
 	if err != nil {
