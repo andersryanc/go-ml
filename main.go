@@ -3,11 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"image/color"
 	"log"
 	"os"
 
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg/draw"
 )
 
 func main() {
@@ -63,9 +65,14 @@ func plotData(path string, xys []xy) error {
 		return fmt.Errorf("could not create plot: %v", err)
 	}
 
-	s, err := plotter.NewScatter(plotter.XYs{
-		{X: 0, Y: 0}, {X: 0.5, Y: 0.5}, {X: 1, Y: 1},
-	})
+	pxys := make(plotter.XYs, len(xys))
+	for i, xy := range xys {
+		pxys[i].X = xy.x
+		pxys[i].Y = xy.y
+	}
+	s, err := plotter.NewScatter(pxys)
+	s.GlyphStyle.Shape = draw.CrossGlyph{}
+	s.Color = color.RGBA{R: 255, A: 255}
 	if err != nil {
 		return fmt.Errorf("could not create scatter: %v", err)
 	}
