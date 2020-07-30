@@ -50,26 +50,30 @@ func readData(path string) ([]xy, error) {
 }
 
 func plotData(path string, xys []xy) error {
-	p, err := plot.New()
-	if err != nil {
-		return fmt.Errorf("could not create plot: %v", err)
-	}
-
-	wt, err := p.WriterTo(512, 512, "png")
-	if err != nil {
-		return fmt.Errorf("could not create writer: %v", err)
-	}
-
+	// Create a file to write the plot to
 	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("could not create %s: %v", path, err)
 	}
-	defer f.Close()
 
+	// Plot the data
+	p, err := plot.New()
+	if err != nil {
+		return fmt.Errorf("could not create plot: %v", err)
+	}
+	wt, err := p.WriterTo(512, 512, "png")
+	if err != nil {
+		return fmt.Errorf("could not create writer: %v", err)
+	}
 	_, err = wt.WriteTo(f)
 	if err != nil {
 		return fmt.Errorf("could not write to %s: %v", path, err)
 	}
 
+	// Make sure the file closes properly,
+	// otherwise the data might not have plotted correctly
+	if err = f.Close(); err != nil {
+		return fmt.Errorf("could not close %s: %v", path, err)
+	}
 	return nil
 }
