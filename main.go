@@ -13,7 +13,7 @@ import (
 	"gonum.org/v1/plot/vg/draw"
 )
 
-// Use bash to run this with an increasing numebr of iterations:
+// Use bash to run this with an increasing number of iterations:
 // ```
 // for n in $(seq 0 100)
 // do
